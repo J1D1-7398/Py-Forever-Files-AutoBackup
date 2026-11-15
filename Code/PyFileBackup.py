@@ -131,65 +131,67 @@ try:
             for i in tasks:
                 print(f" {x}. {i[0]}")
                 x += 1
+            print(f" {x}. Cancel")
             selected_task_to_edit = input(" > ")
-            selected_task_content = tasks[int(selected_task_to_edit) - 1]
-            edit_task_selection = input("\n What do you want to modify?\n 1. Task Name\n 2. Backup location\n 3. Files to backup\n 4. Time between backups\n 5. Cancel\n > ")
-            if edit_task_selection == "1":
-                edit_task_name = input(" Enter new task name: ")
-                if " " in edit_task_name:
-                    print(" Spaces have been replaced with \"-\" as spaces are not allowed")
-                    edit_task_name = edit_task_name.replace(" ", "-")
-                with open("backuptasks.txt", "r") as edit_task_read:
-                    edit_task_content = edit_task_read.read()
-                with open("backuptasks.txt", "w") as edit_task_write:
-                    edit_task_write.write(edit_task_content.replace(f"\"taskname\": \"{selected_task_content[0]}\"", f"\"taskname\": \"{edit_task_name}\""))
-            elif edit_task_selection == "2":
-                edit_task_backup_location = input(" Enter new backup folder location: ")
-                while os.path.exists(create_task_backup_location) == False:
-                    edit_task_backup_location = input(" Please enter a valid path!\n Enter new backup folder location: ")
-                with open("backuptasks.txt", "r") as edit_task_read:
-                    edit_task_content = edit_task_read.read()
-                with open("backuptasks.txt", "w") as edit_task_write:
-                    edit_task_write.write(edit_task_content.replace(f"\"drivelocation\": \"{selected_task_content[1]}\"", f"\"drivelocation\": \"{edit_task_backup_location}\""))
-            elif edit_task_selection == "3":
-                etfb_isok = "n"
-                while etfb_isok == "n":
-                    etfb_path_isok = False
-                    while etfb_path_isok == False:
-                        edit_task_files_backup = input(" Enter new files to backup (Spaced): ")
-                        etfb_path_isok = True
+            if selected_task_to_edit != str(x):
+                selected_task_content = tasks[int(selected_task_to_edit) - 1]
+                edit_task_selection = input("\n What do you want to modify?\n 1. Task Name\n 2. Backup location\n 3. Files to backup\n 4. Time between backups\n 5. Cancel\n > ")
+                if edit_task_selection == "1":
+                    edit_task_name = input(" Enter new task name: ")
+                    if " " in edit_task_name:
+                        print(" Spaces have been replaced with \"-\" as spaces are not allowed")
+                        edit_task_name = edit_task_name.replace(" ", "-")
+                    with open("backuptasks.txt", "r") as edit_task_read:
+                        edit_task_content = edit_task_read.read()
+                    with open("backuptasks.txt", "w") as edit_task_write:
+                        edit_task_write.write(edit_task_content.replace(f"\"taskname\": \"{selected_task_content[0]}\"", f"\"taskname\": \"{edit_task_name}\""))
+                elif edit_task_selection == "2":
+                    edit_task_backup_location = input(" Enter new backup folder location: ")
+                    while os.path.exists(create_task_backup_location) == False:
+                        edit_task_backup_location = input(" Please enter a valid path!\n Enter new backup folder location: ")
+                    with open("backuptasks.txt", "r") as edit_task_read:
+                        edit_task_content = edit_task_read.read()
+                    with open("backuptasks.txt", "w") as edit_task_write:
+                        edit_task_write.write(edit_task_content.replace(f"\"drivelocation\": \"{selected_task_content[1]}\"", f"\"drivelocation\": \"{edit_task_backup_location}\""))
+                elif edit_task_selection == "3":
+                    etfb_isok = "n"
+                    while etfb_isok == "n":
+                        etfb_path_isok = False
+                        while etfb_path_isok == False:
+                            edit_task_files_backup = input(" Enter new files to backup (Spaced): ")
+                            etfb_path_isok = True
+                            for i in edit_task_files_backup.split():
+                                if os.path.exists(i) == False:
+                                    etfb_path_isok = False
+                            if etfb_path_isok == False:
+                                print(f" Please check you have entered a valid path!")
+                        print(" New file selection to be backed up:")
+                        task_files_to_backup_write = ""
+                        print_task_edition_files_backup = ""
                         for i in edit_task_files_backup.split():
-                            if os.path.exists(i) == False:
-                                etfb_path_isok = False
-                        if etfb_path_isok == False:
-                            print(f" Please check you have entered a valid path!")
-                    print(" New file selection to be backed up:")
-                    task_files_to_backup_write = ""
-                    print_task_edition_files_backup = ""
-                    for i in edit_task_files_backup.split():
-                        print("   "+i)
-                        print_task_edition_files_backup += f"\n   {i}"
-                        task_files_to_backup_write += f"\"{i}\","
-                    etfb_isok = input(" Is this selection correct? (y/n): ")
-                with open("backuptasks.txt", "r") as edit_task_read:
-                    edit_task_content = edit_task_read.read()
-                with open("backuptasks.txt", "w") as edit_task_write:
-                    edit_task_write.write(edit_task_content.replace(f"\"backupfiles\": \"{selected_task_content[2]}\"", f"\"backupfiles\": \"{task_files_to_backup_write.removesuffix(",")}\""))
-            elif edit_task_selection == "4":
-                edit_task_time_between_backups = input(" Enter new time between backups (d/h/m): ")
-                while edit_task_time_between_backups[-1] not in "dhm" or edit_task_time_between_backups[:-1].isdigit() == False:
-                    edit_task_time_between_backups = input("\n Ensure correct format! xy where x is a number and y is d,h or m (day, hour, minute)\n Enter new time between backups (d/h/m): ")
-                with open("backuptasks.txt", "r") as edit_task_read:
-                    edit_task_content = edit_task_read.read()
-                with open("backuptasks.txt", "w") as edit_task_write:
-                    edit_task_write.write(edit_task_content.replace(f"\"backupeach\": \"{selected_task_content[3]}\"", f"\"backupeach\": \"{edit_task_time_between_backups}\""))
-            if edit_task_selection in "1234":
-                task_backup_files = ""
-                for i in tasks[int(selected_task_to_edit) - 1][2].split(","):
-                    task_backup_files += "\n   "+i.removeprefix("\"").removesuffix("\"")
-                input(f"\n Old:\n Task Name: {tasks[int(selected_task_to_edit) - 1][0]}\n Task backup location: {tasks[int(selected_task_to_edit) - 1][1]}\n Task backup files:{task_backup_files}\n Task time between backups: {tasks[int(selected_task_to_edit) - 1][3]}\n\n New:\n Task Name: {edit_task_name if edit_task_selection == "1" else tasks[int(selected_task_to_edit) - 1][0]}\n Task backup location: {edit_task_backup_location if edit_task_selection == "2" else tasks[int(selected_task_to_edit) - 1][1]}\n Task backup files:{print_task_edition_files_backup if edit_task_selection == "3" else task_backup_files}\n Task time between backups: {edit_task_time_between_backups if edit_task_selection == "4" else tasks[int(selected_task_to_edit) - 1][3]}\n\n Press Enter to return to main menu...")
-                with open("application.log", "a") as write_log:
-                    write_log.write(f"{time.ctime()}, General: Edited task {tasks[int(selected_task_to_edit) - 1][0]}\n")
+                            print("   "+i)
+                            print_task_edition_files_backup += f"\n   {i}"
+                            task_files_to_backup_write += f"\"{i}\","
+                        etfb_isok = input(" Is this selection correct? (y/n): ")
+                    with open("backuptasks.txt", "r") as edit_task_read:
+                        edit_task_content = edit_task_read.read()
+                    with open("backuptasks.txt", "w") as edit_task_write:
+                        edit_task_write.write(edit_task_content.replace(f"\"backupfiles\": \"{selected_task_content[2]}\"", f"\"backupfiles\": \"{task_files_to_backup_write.removesuffix(",")}\""))
+                elif edit_task_selection == "4":
+                    edit_task_time_between_backups = input(" Enter new time between backups (d/h/m): ")
+                    while edit_task_time_between_backups[-1] not in "dhm" or edit_task_time_between_backups[:-1].isdigit() == False:
+                        edit_task_time_between_backups = input("\n Ensure correct format! xy where x is a number and y is d,h or m (day, hour, minute)\n Enter new time between backups (d/h/m): ")
+                    with open("backuptasks.txt", "r") as edit_task_read:
+                        edit_task_content = edit_task_read.read()
+                    with open("backuptasks.txt", "w") as edit_task_write:
+                        edit_task_write.write(edit_task_content.replace(f"\"backupeach\": \"{selected_task_content[3]}\"", f"\"backupeach\": \"{edit_task_time_between_backups}\""))
+                if edit_task_selection in "1234":
+                    task_backup_files = ""
+                    for i in tasks[int(selected_task_to_edit) - 1][2].split(","):
+                        task_backup_files += "\n   "+i.removeprefix("\"").removesuffix("\"")
+                    input(f"\n Old:\n Task Name: {tasks[int(selected_task_to_edit) - 1][0]}\n Task backup location: {tasks[int(selected_task_to_edit) - 1][1]}\n Task backup files:{task_backup_files}\n Task time between backups: {tasks[int(selected_task_to_edit) - 1][3]}\n\n New:\n Task Name: {edit_task_name if edit_task_selection == "1" else tasks[int(selected_task_to_edit) - 1][0]}\n Task backup location: {edit_task_backup_location if edit_task_selection == "2" else tasks[int(selected_task_to_edit) - 1][1]}\n Task backup files:{print_task_edition_files_backup if edit_task_selection == "3" else task_backup_files}\n Task time between backups: {edit_task_time_between_backups if edit_task_selection == "4" else tasks[int(selected_task_to_edit) - 1][3]}\n\n Press Enter to return to main menu...")
+                    with open("application.log", "a") as write_log:
+                        write_log.write(f"{time.ctime()}, General: Edited task {tasks[int(selected_task_to_edit) - 1][0]}\n")
             subprocess.run("cls" if os.name == "nt" else "clear", shell=True)
         elif main_menu_selection == "4":
             subprocess.run("cls" if os.name == "nt" else "clear", shell=True)
@@ -271,6 +273,6 @@ try:
     with open("application.log", "a") as write_log:
         write_log.write(f"{time.ctime()}, General: Stopped program\n")
 except Exception as e:
-    print(f"\n General error! {e}")
+    print(f"\n General exception! {e}")
     with open("application.log", "a") as write_log:
         write_log.write(f"{time.ctime()}, General: Error! {e}\n{time.ctime()}, General: Stopped program\n")
