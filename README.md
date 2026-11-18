@@ -54,6 +54,12 @@ Files to backup:
    The files that will be backed up by the program to Backup Location
 Time between backups:
    The time between backups, represented as xy where x is a number and y is d, h or m (day, hour, minute)
+   It means how much time will be waited between backups
+   Examples:
+       5d (5 days)
+       4h (4 hours)
+       12m (12 minutes)
+   Any number will work, but for efficient backups I recommend 1d or 8h
 
 ### 2. Create a task
 You will be prompted to enter a name for your task, a backup location, files to be backed up (it will ask for confirmation y/n (yes/no)) and time between backups
